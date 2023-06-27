@@ -1,0 +1,179 @@
+import 'package:absensi_app/absen_model.dart';
+import 'package:absensi_app/database_absen.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+class Absensi extends StatefulWidget {
+  const Absensi({Key? key}) : super(key: key);
+
+  @override
+  State<Absensi> createState() => _AbsensiState();
+}
+
+class _AbsensiState extends State<Absensi> {
+  DateTime now = DateTime.now();
+  DatabaseAbsensi databaseAbsensi = DatabaseAbsensi();
+  DatabaseAbsensi? databaseInstance;
+
+  absensi(String today,String currentHour) async {
+    await databaseAbsensi.insert({
+      "today": today,
+      "come_in": currentHour,
+      "come_out": "k",
+    });
+    setState(() {
+
+    });
+  }
+  Future initDatabase() async {
+    await databaseInstance!.database();
+    setState(() {});
+  }
+
+
+    @override
+  void initState() {
+    super.initState();
+    databaseAbsensi.database();
+    databaseInstance = DatabaseAbsensi();
+    initDatabase();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String formattedDate = DateFormat('EEEE, dd MMMM yyyy').format(now);
+    String formattedHour = DateFormat('HH:mm').format(now);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Absensi"),
+      ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 150,
+              width: double.infinity,
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                  color: Colors.blue, borderRadius: BorderRadius.circular(10)),
+              child: Align(
+                child: Column(
+                  children: [
+                    Text(
+                      formattedDate,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        SizedBox(
+                            height: 40,
+                            child: ElevatedButton(
+                              onPressed: () {
+                              absensi(formattedDate, formattedHour);
+                              },
+                              style: ButtonStyle(
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      5), // Set the border radius of the button
+                                ),
+                              )),
+                              child: Text("Absen Masuk"),
+                            )),
+                        SizedBox(
+                            height: 40,
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ButtonStyle(
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      5), // Set the border radius of the button
+                                ),
+                              )),
+                              child: Text("Absen Keluar"),
+                            ))
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Text(
+              "Riwayat Presensi",
+              style: TextStyle(fontSize: 20),
+            ),
+            databaseInstance != null
+                ? FutureBuilder<List<AbsenModel>>(
+              future: databaseInstance!.all(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.length == 0) {
+                    return Center(
+                      child: Text("Produk Belum Ditambahkan"),
+                    );
+                  }
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return  SizedBox(
+                          height: 60,
+                          child: Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Text(snapshot.data![index].today!),
+                                  Expanded(child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text(snapshot.data![index].comeIn!),
+                                          Text("Masuk"),
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          Text(snapshot.data![index].comeOut!),
+                                          Text("keluar"),
+                                        ],
+                                      )
+                                    ],
+                                  ))
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  Center(child: Text("${snapshot.error}"));
+                }
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            )
+                : CircularProgressIndicator(),
+          ],
+        ),
+      ),
+    );
+  }
+}
