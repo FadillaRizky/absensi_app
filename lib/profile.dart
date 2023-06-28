@@ -45,8 +45,176 @@ class _ProfileState extends State<Profile> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         if (snapshot.data!.length == 0) {
-                          return Center(
-                            child: Text("Produk Belum Ditambahkan"),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Nama",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              Container(
+                                margin: EdgeInsets.symmetric(vertical: 3),
+                                width: double.infinity,
+                                height: 50,
+                                child: TextFormField(
+                                  enabled: false,
+                                  style: TextStyle(color: Colors.black),
+                                  initialValue: "",
+                                  decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(20, 3, 1, 3),
+                                    hintStyle: TextStyle(color: Colors.black26),
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 0, style: BorderStyle.none),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    filled: true,
+                                    fillColor: Color.fromARGB(
+                                      239,
+                                      239,
+                                      239,
+                                      239,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                "NIK",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              Container(
+                                margin: EdgeInsets.symmetric(vertical: 3),
+                                width: double.infinity,
+                                height: 50,
+                                child: TextFormField(
+                                  enabled: false,
+                                  style: TextStyle(color: Colors.black),
+                                  initialValue: "",
+                                  decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(20, 3, 1, 3),
+                                    hintStyle: TextStyle(color: Colors.black26),
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 0, style: BorderStyle.none),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    filled: true,
+                                    fillColor: Color.fromARGB(
+                                      239,
+                                      239,
+                                      239,
+                                      239,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                "Tanggal Lahir",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              Container(
+                                margin: EdgeInsets.symmetric(vertical: 3),
+                                width: double.infinity,
+                                height: 50,
+                                child: TextFormField(
+                                  enabled: false,
+                                  style: TextStyle(color: Colors.black),
+                                  initialValue: "",
+                                  decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(20, 3, 1, 3),
+                                    hintStyle: TextStyle(color: Colors.black26),
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 0, style: BorderStyle.none),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    filled: true,
+                                    fillColor: Color.fromARGB(
+                                      239,
+                                      239,
+                                      239,
+                                      239,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                "Jabatan",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              Container(
+                                margin: EdgeInsets.symmetric(vertical: 3),
+                                width: double.infinity,
+                                height: 50,
+                                child: TextFormField(
+                                  enabled: false,
+                                  style: TextStyle(color: Colors.black),
+                                  initialValue: "",
+                                  decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(20, 3, 1, 3),
+                                    hintStyle: TextStyle(color: Colors.black26),
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 0, style: BorderStyle.none),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    filled: true,
+                                    fillColor: Color.fromARGB(
+                                      239,
+                                      239,
+                                      239,
+                                      239,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                "Alamat",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              Container(
+                                margin: EdgeInsets.symmetric(vertical: 3),
+                                width: double.infinity,
+                                height: 50,
+                                child: TextFormField(
+                                  enabled: false,
+                                  style: TextStyle(color: Colors.black),
+                                  initialValue: "",
+                                  decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(20, 3, 1, 3),
+                                    hintStyle: TextStyle(color: Colors.black26),
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 0, style: BorderStyle.none),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    filled: true,
+                                    fillColor: Color.fromARGB(
+                                      239,
+                                      239,
+                                      239,
+                                      239,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(Colors.blueAccent)
+                                  ),
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, "/editprofile");
+                                    },
+                                    child: Text("Ubah",style: TextStyle(color: Colors.white))),
+                              )
+                            ],
                           );
                         }
                         return Column(
@@ -62,9 +230,7 @@ class _ProfileState extends State<Profile> {
                               height: 50,
                               child: TextFormField(
                                 enabled: false,
-                                style: TextStyle(
-                                  color: Colors.black
-                                ),
+                                style: TextStyle(color: Colors.black),
                                 initialValue: snapshot.data![0].name ?? "",
                                 decoration: InputDecoration(
                                   contentPadding:
@@ -95,9 +261,7 @@ class _ProfileState extends State<Profile> {
                               height: 50,
                               child: TextFormField(
                                 enabled: false,
-                                style: TextStyle(
-                                  color: Colors.black
-                                ),
+                                style: TextStyle(color: Colors.black),
                                 initialValue: snapshot.data![0].nik ?? "",
                                 decoration: InputDecoration(
                                   contentPadding:
@@ -128,9 +292,7 @@ class _ProfileState extends State<Profile> {
                               height: 50,
                               child: TextFormField(
                                 enabled: false,
-                                style: TextStyle(
-                                  color: Colors.black
-                                ),
+                                style: TextStyle(color: Colors.black),
                                 initialValue: snapshot.data![0].bod ?? "",
                                 decoration: InputDecoration(
                                   contentPadding:
@@ -161,9 +323,7 @@ class _ProfileState extends State<Profile> {
                               height: 50,
                               child: TextFormField(
                                 enabled: false,
-                                style: TextStyle(
-                                  color: Colors.black
-                                ),
+                                style: TextStyle(color: Colors.black),
                                 initialValue: snapshot.data![0].position ?? "",
                                 decoration: InputDecoration(
                                   contentPadding:
@@ -194,9 +354,7 @@ class _ProfileState extends State<Profile> {
                               height: 50,
                               child: TextFormField(
                                 enabled: false,
-                                style: TextStyle(
-                                  color: Colors.black
-                                ),
+                                style: TextStyle(color: Colors.black),
                                 initialValue: snapshot.data![0].address ?? "",
                                 decoration: InputDecoration(
                                   contentPadding:
@@ -217,11 +375,17 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                             ),
-                            ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, "/editprofile");
-                                },
-                                child: Text("Ubah"))
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(Colors.blueAccent)
+                                ),
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, "/editprofile");
+                                  },
+                                  child: Text("Ubah",style: TextStyle(color: Colors.white),)),
+                            )
                           ],
                         );
                       }

@@ -44,7 +44,7 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("My Profile"),
+        title: Text("Edit Profile"),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -57,28 +57,35 @@ class _EditProfileState extends State<EditProfile> {
               ItemProfile(title: "Jabatan", controller: positionController, tipeKeyboard: TextInputType.text),
               ItemProfile(title: "Alamat", controller: addressController, tipeKeyboard: TextInputType.text),
         
-              ElevatedButton(onPressed: ()async{
-                if(userId != null){
-                  await databaseInstance.update(userId!,{
-                    "name" : nameController.text,
-                    "nik" : nikController.text,
-                    "bod" : bodController.text,
-                    "position" : positionController.text,
-                    "address" : addressController.text,
-                  });
-                  Navigator.pop(context);
-                }else{
-                  await databaseInstance.insert({
-                    "name" : nameController.text,
-                    "nik" : nikController.text,
-                    "bod" : bodController.text,
-                    "position" : positionController.text,
-                    "address" : addressController.text,
-                  });
-                }
-                Navigator.popAndPushNamed(context, "/profile");
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.blueAccent)
+                    ),
+                    onPressed: ()async{
+                  if(userId != null){
+                    await databaseInstance.update(userId!,{
+                      "name" : nameController.text,
+                      "nik" : nikController.text,
+                      "bod" : bodController.text,
+                      "position" : positionController.text,
+                      "address" : addressController.text,
+                    });
+                    Navigator.pop(context);
+                  }else{
+                    await databaseInstance.insert({
+                      "name" : nameController.text,
+                      "nik" : nikController.text,
+                      "bod" : bodController.text,
+                      "position" : positionController.text,
+                      "address" : addressController.text,
+                    });
+                  }
+                  Navigator.popAndPushNamed(context, "/profile");
 
-              }, child: Text("Submit"))
+                }, child: Text("Submit",style: TextStyle(color: Colors.white),)),
+              )
             ],
           ),
         ),

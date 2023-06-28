@@ -15,6 +15,7 @@ class DatabaseCuti {
   final String startCuti = "start_cuti";
   final String endCuti = "end_cuti";
   final String reason = "reason";
+  final String atasanName = "atasan_name";
 
   Database? _database;
 
@@ -32,7 +33,7 @@ class DatabaseCuti {
 
   Future _onCreate(Database db, int version) async {
     await db.execute(
-        'CREATE TABLE $table ($id INTEGER PRIMARY KEY, $startCuti TEXT NULL , $endCuti TEXT NULL,$reason TEXT NULL)');
+        'CREATE TABLE $table ($id INTEGER PRIMARY KEY, $startCuti TEXT NULL , $endCuti TEXT NULL,$reason TEXT NULL,$atasanName TEXT NULL)');
   }
 
   Future<List<CutiModel>> all() async {

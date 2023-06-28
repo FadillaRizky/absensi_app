@@ -19,6 +19,7 @@ class _CutiState extends State<Cuti> {
   DatabaseCuti databaseCuti = DatabaseCuti();
   DatabaseCuti? databaseInstance;
   TextEditingController reasonController = TextEditingController();
+  TextEditingController atasanController = TextEditingController();
   DateTime now = DateTime.now();
   DateTime? startCuti;
   DateTime? endCuti;
@@ -160,6 +161,32 @@ class _CutiState extends State<Cuti> {
                     Container(
                       width: double.infinity,
                       child: TextFormField(
+                        controller: atasanController,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(20, 15, 1, 3),
+                          hintText: "Nama Atasan",
+                          hintStyle: TextStyle(color: Colors.black26),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 0, style: BorderStyle.none),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          filled: true,
+                          fillColor: Color.fromARGB(
+                            239,
+                            239,
+                            239,
+                            239,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: TextFormField(
                         controller: reasonController,
                         maxLines: 3,
                         decoration: InputDecoration(
@@ -181,6 +208,8 @@ class _CutiState extends State<Cuti> {
                         ),
                       ),
                     ),
+
+
                     SizedBox(height: 10,),
                     SizedBox(
                         height: 40,
@@ -201,6 +230,11 @@ class _CutiState extends State<Cuti> {
                                 "Alasan Cuti Belum Terisi",);
                               return;
                             }
+                            if (atasanController.text.isEmpty ) {
+                              EasyLoading.showInfo(
+                                "Nama Atasan Belum Terisi",);
+                              return;
+                            }
                             if (startCuti!.isBefore(endCuti!)) {
                               EasyLoading.showError(
                                   "Tanggal mulai cuti tidak boleh lebih dari sampai cuti",
@@ -213,7 +247,8 @@ class _CutiState extends State<Cuti> {
                             await databaseCuti.insert({
                               "start_cuti": startCuti.toString(),
                               "end_cuti": endCuti.toString(),
-                              "reason" : reasonController.text
+                              "reason" : reasonController.text,
+                              "atasan_name" : atasanController.text,
                             });
                             setState(() {});
                           },
@@ -303,6 +338,29 @@ class _CutiState extends State<Cuti> {
                                           ],
                                         ),
                                         SizedBox(height: 5,),
+                                        Text("Nama Atasan",style: TextStyle(color: Colors.white)),
+                                        SizedBox(height: 5,),
+                                        TextFormField(
+                                          enabled: false,
+                                          initialValue: snapshot.data![index].atasanName ?? "",
+                                          maxLines: null,
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.fromLTRB(20, 15, 1, 3),
+                                            hintStyle: TextStyle(color: Colors.black26),
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  width: 0, style: BorderStyle.none),
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            filled: true,
+                                            fillColor: Color.fromARGB(
+                                              239,
+                                              239,
+                                              239,
+                                              239,
+                                            ),
+                                          ),
+                                        ),
                                         Text("Alasan Cuti",style: TextStyle(color: Colors.white)),
                                         SizedBox(height: 5,),
                                         TextFormField(
