@@ -249,15 +249,14 @@ class _CutiState extends State<Cuti> {
                               "end_cuti": endCuti.toString(),
                               "reason" : reasonController.text,
                               "atasan_name" : atasanController.text,
-                            }).whenComplete((){
-                              setState(() {
-                                startCuti = null;
-                                endCuti = null;
-                                reasonController.text = "";
-                                atasanController.text = "";
-                              });
-                            });
+                            }).whenComplete((){});
                             
+                            setState(() {
+                              startCuti = null;
+                              endCuti = null;
+                              reasonController.text = "";
+                              atasanController.text = "";
+                            });
                           },
                           style: ButtonStyle(
                               shape: MaterialStateProperty.all<
