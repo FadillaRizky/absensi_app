@@ -59,7 +59,7 @@ class _ProfileState extends State<Profile> {
                                 child: TextFormField(
                                   enabled: false,
                                   style: TextStyle(color: Colors.black),
-                                  initialValue: "",
+                                  initialValue: "..",
                                   decoration: InputDecoration(
                                     contentPadding:
                                         EdgeInsets.fromLTRB(20, 3, 1, 3),
@@ -90,7 +90,7 @@ class _ProfileState extends State<Profile> {
                                 child: TextFormField(
                                   enabled: false,
                                   style: TextStyle(color: Colors.black),
-                                  initialValue: "",
+                                  initialValue: "..",
                                   decoration: InputDecoration(
                                     contentPadding:
                                         EdgeInsets.fromLTRB(20, 3, 1, 3),
@@ -121,7 +121,7 @@ class _ProfileState extends State<Profile> {
                                 child: TextFormField(
                                   enabled: false,
                                   style: TextStyle(color: Colors.black),
-                                  initialValue: "",
+                                  initialValue: "..",
                                   decoration: InputDecoration(
                                     contentPadding:
                                         EdgeInsets.fromLTRB(20, 3, 1, 3),
@@ -152,7 +152,7 @@ class _ProfileState extends State<Profile> {
                                 child: TextFormField(
                                   enabled: false,
                                   style: TextStyle(color: Colors.black),
-                                  initialValue: "",
+                                  initialValue: "..",
                                   decoration: InputDecoration(
                                     contentPadding:
                                         EdgeInsets.fromLTRB(20, 3, 1, 3),
@@ -183,7 +183,7 @@ class _ProfileState extends State<Profile> {
                                 child: TextFormField(
                                   enabled: false,
                                   style: TextStyle(color: Colors.black),
-                                  initialValue: "",
+                                  initialValue: "..",
                                   decoration: InputDecoration(
                                     contentPadding:
                                         EdgeInsets.fromLTRB(20, 3, 1, 3),

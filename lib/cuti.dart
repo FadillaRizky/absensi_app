@@ -40,6 +40,10 @@ class _CutiState extends State<Cuti> {
     });
     setState(() {});
   }
+  Future delete(int id) async {
+    await databaseInstance!.delete(id);
+    setState(() {});
+  }
 
   Future initDatabase() async {
     await databaseInstance!.database();
@@ -60,13 +64,18 @@ class _CutiState extends State<Cuti> {
     String formattedHour = DateFormat('HH:mm').format(now);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cuti"),
+        title: Text("Cuti",),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              "Form Cuti",
+              style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10,),
             Container(
               width: double.infinity,
               padding: EdgeInsets.fromLTRB(8, 15, 8, 8),
@@ -277,7 +286,7 @@ class _CutiState extends State<Cuti> {
             ),
             Text(
               "Riwayat Cuti",
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
             ),
             databaseInstance != null
                 ? FutureBuilder<List<CutiModel>>(
@@ -307,40 +316,51 @@ class _CutiState extends State<Cuti> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
                                           children: [
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(DateFormat(
-                                                'EEEE')
-                                                .format(DateTime.parse(
-                                                data[index].startCuti!))
-                                                .toString(),style: TextStyle(color: Colors.white)),
-                                            Text(DateFormat(
-                                                    'dd MMMM yyyy')
-                                                .format(DateTime.parse(
-                                                    data[index].startCuti!))
-                                                .toString(),style: TextStyle(color: Colors.white)),
-                                          ],
-                                        ),
-                                        Text("sampai",style: TextStyle(color: Colors.white)),
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(DateFormat(
-                                                'EEEE')
-                                                .format(DateTime.parse(
-                                                data[index].endCuti!))
-                                                .toString(),style: TextStyle(color: Colors.white),),
-                                            Text(DateFormat(
-                                                    'dd MMMM yyyy')
-                                                .format(DateTime.parse(
-                                                    data[index].endCuti!))
-                                                .toString(),style: TextStyle(color: Colors.white)),
-                                          ],
-                                        )
+                                            Expanded(
+                                              child: Container(
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                                  children: [
+                                                Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(DateFormat(
+                                                        'EEEE')
+                                                        .format(DateTime.parse(
+                                                        data[index].startCuti!))
+                                                        .toString(),style: TextStyle(color: Colors.white)),
+                                                    Text(DateFormat(
+                                                            'dd MMMM yyyy')
+                                                        .format(DateTime.parse(
+                                                            data[index].startCuti!))
+                                                        .toString(),style: TextStyle(color: Colors.white)),
+                                                  ],
+                                                ),
+                                                Text("sampai",style: TextStyle(color: Colors.white)),
+                                                Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(DateFormat(
+                                                        'EEEE')
+                                                        .format(DateTime.parse(
+                                                        data[index].endCuti!))
+                                                        .toString(),style: TextStyle(color: Colors.white),),
+                                                    Text(DateFormat(
+                                                            'dd MMMM yyyy')
+                                                        .format(DateTime.parse(
+                                                            data[index].endCuti!))
+                                                        .toString(),style: TextStyle(color: Colors.white)),
+                                                  ],
+                                                ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            IconButton(onPressed: (){
+                                              delete(snapshot.data![index].id!);
+                                            }, icon: Icon(Icons.clear))
                                           ],
                                         ),
                                         SizedBox(height: 5,),
@@ -367,6 +387,7 @@ class _CutiState extends State<Cuti> {
                                             ),
                                           ),
                                         ),
+                                        SizedBox(height: 5,),
                                         Text("Alasan Cuti",style: TextStyle(color: Colors.white)),
                                         SizedBox(height: 5,),
                                         TextFormField(
