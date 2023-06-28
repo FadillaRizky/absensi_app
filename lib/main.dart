@@ -4,6 +4,7 @@ import 'package:absensi_app/home.dart';
 import 'package:absensi_app/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:intl/date_symbol_data_file.dart';
 
 import 'edit_profile.dart';
 

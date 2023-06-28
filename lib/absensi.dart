@@ -141,7 +141,7 @@ class _AbsensiState extends State<Absensi> {
             ),
             Text(
               "Riwayat Presensi",
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
             ),
             databaseAbsensi != null
                 ? FutureBuilder<List<AbsenModel>>(
