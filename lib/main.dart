@@ -1,4 +1,5 @@
 import 'package:absensi_app/absensi.dart';
+import 'package:absensi_app/cuti.dart';
 import 'package:absensi_app/home.dart';
 import 'package:absensi_app/profile.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => HomePage(),
         '/absensi': (context) => Absensi(),
+        '/cuti': (context) => Cuti(),
         '/profile': (context) => Profile(),
         '/editprofile': (context) => EditProfile(),
 

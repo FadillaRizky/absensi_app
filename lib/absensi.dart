@@ -16,46 +16,46 @@ class _AbsensiState extends State<Absensi> {
   DatabaseAbsensi databaseAbsensi = DatabaseAbsensi();
   DatabaseAbsensi? databaseInstance;
 
-  absensi(String today,String currentHour) async {
-    databaseInstance!.all().then((value) async{
-      List<AbsenModel> data = value;
-      var latestDate = DateFormat("EEEE, dd MMMM yyyy").parse(value.last.today!);
-      if (latestDate.day == now.day) {
-        EasyLoading.showError("Anda sudah absen untuk hari ini",dismissOnTap: true);
-        return;
-      }
-      await databaseAbsensi.insert({
-        "today": today,
-        "come_in": currentHour,
-        "come_out": "-",
-      });
-      setState(() {
+  absensi(String today, String currentHour) async {
+    Future<List<AbsenModel>> data = databaseInstance!.all();
+    List<AbsenModel> value = await data;
 
-      });
+    var latestDate =
+        DateFormat("EEEE, dd MMMM yyyy").parse(value.last.today!);
+    if (latestDate.day == now.day) {
+      EasyLoading.showError("Anda sudah absen untuk hari ini",
+          dismissOnTap: true);
+      return;
+    }
+    setState(() {});
+    await databaseAbsensi.insert({
+      "today": today,
+      "come_in": currentHour,
+      "come_out": "-",
     });
   }
 
-  absensiKeluar(String today,String currentHour) async {
-    databaseInstance!.all().then((value) async{
-      List<AbsenModel> data = value;
-      
-      await databaseAbsensi.update(
-        value.last.id!,
-      {
-        "come_out": currentHour,
-      });
-      setState(() {
-
-      });
+  absensiKeluar(String today, String currentHour) async {
+    Future<List<AbsenModel>> data = databaseInstance!.all();
+    List<AbsenModel> value = await data;
+    
+    if (value.isEmpty) {
+      EasyLoading.showError("Absensi masih kosong",
+          dismissOnTap: true);
+      return;
+    }
+    await databaseAbsensi.update(value.last.id!, {
+      "come_out": currentHour,
     });
+    setState(() {});
   }
+
   Future initDatabase() async {
     await databaseInstance!.database();
     setState(() {});
   }
 
-
-    @override
+  @override
   void initState() {
     super.initState();
     databaseAbsensi.database();
@@ -99,7 +99,7 @@ class _AbsensiState extends State<Absensi> {
                             height: 40,
                             child: ElevatedButton(
                               onPressed: () {
-                              absensi(formattedDate, formattedHour);
+                                absensi(formattedDate, formattedHour);
                               },
                               style: ButtonStyle(
                                   shape: MaterialStateProperty.all<
@@ -142,64 +142,66 @@ class _AbsensiState extends State<Absensi> {
             ),
             databaseInstance != null
                 ? FutureBuilder<List<AbsenModel>>(
-              future: databaseInstance!.all(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.data!.length == 0) {
-                    return Expanded(
-                      child: Center(
-                        child: Text("Absensi masih kosong"),
-                      ),
-                    );
-                  }
-                  // Membalikkan data agar data yg terbaru tampil di atas
-                  var data = snapshot.data!.reversed.toList();
-                  return Expanded(
-                    child: ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        return  SizedBox(
-                          height: 80,
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Text(data[index].today!),
-                                  Expanded(child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Column(
-                                        children: [
-                                          Text(data[index].comeIn!),
-                                          Text("Masuk"),
-                                        ],
-                                      ),
-                                      Column(
-                                        children: [
-                                          Text(data[index].comeOut!),
-                                          Text("keluar"),
-                                        ],
-                                      )
-                                    ],
-                                  ))
-                                ],
-                              ),
+                    future: databaseInstance!.all(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.length == 0) {
+                          return Expanded(
+                            child: Center(
+                              child: Text("Absensi masih kosong"),
                             ),
+                          );
+                        }
+                        // Membalikkan data agar data yg terbaru tampil di atas
+                        var data = snapshot.data!.reversed.toList();
+                        return Expanded(
+                          child: ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              return SizedBox(
+                                height: 80,
+                                child: Card(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      children: [
+                                        Text(data[index].today!),
+                                        Expanded(
+                                            child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Text(data[index].comeIn!),
+                                                Text("Masuk"),
+                                              ],
+                                            ),
+                                            Column(
+                                              children: [
+                                                Text(data[index].comeOut!),
+                                                Text("keluar"),
+                                              ],
+                                            )
+                                          ],
+                                        ))
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         );
-                      },
-                    ),
-                  );
-                }
-                if (snapshot.hasError) {
-                  Center(child: Text("${snapshot.error}"));
-                }
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
-            )
+                      }
+                      if (snapshot.hasError) {
+                        Center(child: Text("${snapshot.error}"));
+                      }
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  )
                 : CircularProgressIndicator(),
           ],
         ),

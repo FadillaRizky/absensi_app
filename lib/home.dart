@@ -41,7 +41,9 @@ class _HomePageState extends State<HomePage> {
                 }, child: Text("Form Absen"))),
             SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(onPressed: (){}, child: Text("Form Izin Cuti"))),
+                child: ElevatedButton(onPressed: (){
+                  Navigator.pushNamed(context, "/cuti");
+                }, child: Text("Form Izin Cuti"))),
             SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(onPressed: (){
