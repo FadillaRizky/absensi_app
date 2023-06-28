@@ -1,3 +1,4 @@
+
 import 'package:absensi_app/absen_model.dart';
 import 'package:absensi_app/cuti_model.dart';
 import 'package:absensi_app/database_absen.dart';
@@ -17,13 +18,16 @@ class Cuti extends StatefulWidget {
 class _CutiState extends State<Cuti> {
   DatabaseCuti databaseCuti = DatabaseCuti();
   DatabaseCuti? databaseInstance;
+  TextEditingController reasonController = TextEditingController();
   DateTime now = DateTime.now();
   DateTime? startCuti;
   DateTime? endCuti;
 
-  tambahCuti(DateTime startCuti,DateTime endCuti) async {
+  tambahCuti(DateTime startCuti, DateTime endCuti) async {
     if (!startCuti.isBefore(endCuti)) {
-      EasyLoading.showError("Tanggal mulai cuti tidak boleh lebih dari sampai cuti",dismissOnTap: true);
+      EasyLoading.showError(
+          "Tanggal mulai cuti tidak boleh lebih dari sampai cuti",
+          dismissOnTap: true);
       return;
     }
     Future<List<CutiModel>> data = databaseInstance!.all();
@@ -31,6 +35,7 @@ class _CutiState extends State<Cuti> {
     await databaseCuti.insert({
       "start_cuti": startCuti.toString(),
       "end_cuti": endCuti.toString(),
+      "reason" : reasonController.text
     });
     setState(() {});
   }
@@ -62,21 +67,13 @@ class _CutiState extends State<Cuti> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 200,
               width: double.infinity,
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.fromLTRB(8, 15, 8, 8),
               decoration: BoxDecoration(
                   color: Colors.blue, borderRadius: BorderRadius.circular(10)),
               child: Align(
                 child: Column(
                   children: [
-                    Text(
-                      formattedDate,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -84,6 +81,7 @@ class _CutiState extends State<Cuti> {
                           height: 40,
                           width: 150,
                           child: DateTimeFormField(
+                            firstDate: DateTime.now(),
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.fromLTRB(20, 3, 1, 3),
                               hintText: "Mulai Cuti",
@@ -115,6 +113,7 @@ class _CutiState extends State<Cuti> {
                           height: 40,
                           width: 150,
                           child: DateTimeFormField(
+                            firstDate: startCuti,
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.fromLTRB(20, 3, 1, 3),
                               hintText: "Sampai Cuti",
@@ -147,11 +146,65 @@ class _CutiState extends State<Cuti> {
                     SizedBox(
                       height: 15,
                     ),
+                    Container(
+                      width: double.infinity,
+                      child: TextFormField(
+                        controller: reasonController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(20, 15, 1, 3),
+                          hintText: "Alasan Cuti",
+                          hintStyle: TextStyle(color: Colors.black26),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 0, style: BorderStyle.none),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          filled: true,
+                          fillColor: Color.fromARGB(
+                            239,
+                            239,
+                            239,
+                            239,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
                     SizedBox(
                         height: 40,
                         child: ElevatedButton(
-                          onPressed: () {
-                            tambahCuti(startCuti!, endCuti!);
+                          onPressed: () async {
+                            if (startCuti == null ) {
+                              EasyLoading.showInfo(
+                                "Mulai Cuti Belum Terisi",);
+                              return;
+                            }
+                            if (endCuti == null ) {
+                              EasyLoading.showInfo(
+                                "Sampai Cuti Belum Terisi",);
+                              return;
+                            }
+                            if (reasonController.text.isEmpty ) {
+                              EasyLoading.showInfo(
+                                "Alasan Cuti Belum Terisi",);
+                              return;
+                            }
+                            // if (startCuti!.isBefore(endCuti!)) {
+                            //   EasyLoading.showError(
+                            //       "Tanggal mulai cuti tidak boleh lebih dari sampai cuti",
+                            //       dismissOnTap: true);
+                            //   return;
+                            // }
+
+                            Future<List<CutiModel>> data = databaseInstance!.all();
+                            List<CutiModel> value = await data;
+                            await databaseCuti.insert({
+                              "start_cuti": startCuti.toString(),
+                              "end_cuti": endCuti.toString(),
+                              "reason" : reasonController.text
+                            });
+                            setState(() {});
                           },
                           style: ButtonStyle(
                               shape: MaterialStateProperty.all<
@@ -171,7 +224,7 @@ class _CutiState extends State<Cuti> {
               height: 15,
             ),
             Text(
-              "List Cuti",
+              "Riwayat Cuti",
               style: TextStyle(fontSize: 20),
             ),
             databaseInstance != null
@@ -193,29 +246,76 @@ class _CutiState extends State<Cuti> {
                             itemCount: snapshot.data!.length,
                             itemBuilder: (context, index) {
                               return SizedBox(
-                                height: 80,
+                                width: double.infinity,
                                 child: Card(
+                                  color: Colors.blue,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Row(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Expanded(child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            Column(
-                                              children: [
-                                                Text(DateFormat('EEEE, dd MMMM yyyy').format(DateTime.parse(data[index].startCuti!)).toString()),
-                                                Text("Mulai"),
-                                              ],
-                                            ),
-                                            Column(
-                                              children: [
-                                                Text(DateFormat('EEEE, dd MMMM yyyy').format(DateTime.parse(data[index].endCuti!)).toString()),
-                                                Text("Selesai"),
-                                              ],
-                                            )
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(DateFormat(
+                                                'EEEE')
+                                                .format(DateTime.parse(
+                                                data[index].startCuti!))
+                                                .toString(),style: TextStyle(color: Colors.white)),
+                                            Text(DateFormat(
+                                                    'dd MMMM yyyy')
+                                                .format(DateTime.parse(
+                                                    data[index].startCuti!))
+                                                .toString(),style: TextStyle(color: Colors.white)),
                                           ],
-                                        ))
+                                        ),
+                                        Text("sampai",style: TextStyle(color: Colors.white)),
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(DateFormat(
+                                                'EEEE')
+                                                .format(DateTime.parse(
+                                                data[index].endCuti!))
+                                                .toString(),style: TextStyle(color: Colors.white),),
+                                            Text(DateFormat(
+                                                    'dd MMMM yyyy')
+                                                .format(DateTime.parse(
+                                                    data[index].endCuti!))
+                                                .toString(),style: TextStyle(color: Colors.white)),
+                                          ],
+                                        )
+                                          ],
+                                        ),
+                                        SizedBox(height: 5,),
+                                        Text("Alasan Cuti",style: TextStyle(color: Colors.white)),
+                                        SizedBox(height: 5,),
+                                        TextFormField(
+                                          enabled: false,
+                                          initialValue: snapshot.data![index].reason,
+                                          maxLines: null,
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.fromLTRB(20, 15, 1, 3),
+                                            hintStyle: TextStyle(color: Colors.black26),
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  width: 0, style: BorderStyle.none),
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            filled: true,
+                                            fillColor: Color.fromARGB(
+                                              239,
+                                              239,
+                                              239,
+                                              239,
+                                            ),
+                                          ),
+                                        )
+
                                       ],
                                     ),
                                   ),

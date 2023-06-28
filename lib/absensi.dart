@@ -14,19 +14,20 @@ class Absensi extends StatefulWidget {
 class _AbsensiState extends State<Absensi> {
   DateTime now = DateTime.now();
   DatabaseAbsensi databaseAbsensi = DatabaseAbsensi();
-  DatabaseAbsensi? databaseInstance;
 
   absensi(String today, String currentHour) async {
-    Future<List<AbsenModel>> data = databaseInstance!.all();
+    Future<List<AbsenModel>> data = databaseAbsensi!.all();
     List<AbsenModel> value = await data;
 
-    var latestDate =
-        DateFormat("EEEE, dd MMMM yyyy").parse(value.last.today!);
-    if (latestDate.day == now.day) {
-      EasyLoading.showError("Anda sudah absen untuk hari ini",
-          dismissOnTap: true);
-      return;
-    }
+    if (value.isNotEmpty) {
+      var latestDate =
+      DateFormat("EEEE, dd MMMM yyyy", ).parse(value.last.today!);
+      if (latestDate.day == now.day) {
+        EasyLoading.showError("Anda sudah absen untuk hari ini",
+            dismissOnTap: true);
+        return;
+      }
+    }  
     setState(() {});
     await databaseAbsensi.insert({
       "today": today,
@@ -36,7 +37,7 @@ class _AbsensiState extends State<Absensi> {
   }
 
   absensiKeluar(String today, String currentHour) async {
-    Future<List<AbsenModel>> data = databaseInstance!.all();
+    Future<List<AbsenModel>> data = databaseAbsensi!.all();
     List<AbsenModel> value = await data;
     
     if (value.isEmpty) {
@@ -51,7 +52,7 @@ class _AbsensiState extends State<Absensi> {
   }
 
   Future initDatabase() async {
-    await databaseInstance!.database();
+    await databaseAbsensi!.database();
     setState(() {});
   }
 
@@ -59,13 +60,15 @@ class _AbsensiState extends State<Absensi> {
   void initState() {
     super.initState();
     databaseAbsensi.database();
-    databaseInstance = DatabaseAbsensi();
+    databaseAbsensi = DatabaseAbsensi();
     initDatabase();
   }
 
   @override
   Widget build(BuildContext context) {
-    String formattedDate = DateFormat('EEEE, dd MMMM yyyy').format(now);
+    final DateFormat formatter = DateFormat('EEEE, dd MMMM yyyy');
+    final String formattedDate = formatter.format(now);
+
     String formattedHour = DateFormat('HH:mm').format(now);
     return Scaffold(
       appBar: AppBar(
@@ -140,9 +143,9 @@ class _AbsensiState extends State<Absensi> {
               "Riwayat Presensi",
               style: TextStyle(fontSize: 20),
             ),
-            databaseInstance != null
+            databaseAbsensi != null
                 ? FutureBuilder<List<AbsenModel>>(
-                    future: databaseInstance!.all(),
+                    future: databaseAbsensi!.all(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         if (snapshot.data!.length == 0) {
