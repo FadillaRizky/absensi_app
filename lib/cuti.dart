@@ -102,12 +102,17 @@ class _CutiState extends State<Cuti> {
                             mode: DateTimeFieldPickerMode.date,
                             // autovalidateMode: AutovalidateMode.always,
                             // validator: (e) => (e?.day ?? 0) == 1 ? 'Please not the first day' : null,
+                            // onSaved: (DateTime? value) {
+                            //   setState(() {
+                            //     startCuti = value;
+                            //   });
+                            // }
                             onDateSelected: (DateTime value) {
-                              setState(() {
-                                startCuti = value;
-                              });
-                            },
-                          ),
+                                setState(() {
+                                  startCuti = value;
+                                });
+                              },
+                              ),
                         ),
                         Container(
                           height: 40,
@@ -139,6 +144,12 @@ class _CutiState extends State<Cuti> {
                                 endCuti = value;
                               });
                             },
+
+                              // onSaved: (DateTime? value) {
+                              //   setState(() {
+                              //     endCuti = value;
+                              //   });
+                              // }
                           ),
                         ),
                       ],
@@ -190,12 +201,12 @@ class _CutiState extends State<Cuti> {
                                 "Alasan Cuti Belum Terisi",);
                               return;
                             }
-                            // if (startCuti!.isBefore(endCuti!)) {
-                            //   EasyLoading.showError(
-                            //       "Tanggal mulai cuti tidak boleh lebih dari sampai cuti",
-                            //       dismissOnTap: true);
-                            //   return;
-                            // }
+                            if (startCuti!.isBefore(endCuti!)) {
+                              EasyLoading.showError(
+                                  "Tanggal mulai cuti tidak boleh lebih dari sampai cuti",
+                                  dismissOnTap: true);
+                              return;
+                            }
 
                             Future<List<CutiModel>> data = databaseInstance!.all();
                             List<CutiModel> value = await data;
