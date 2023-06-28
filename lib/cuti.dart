@@ -235,7 +235,7 @@ class _CutiState extends State<Cuti> {
                                 "Nama Atasan Belum Terisi",);
                               return;
                             }
-                            if (startCuti!.isBefore(endCuti!)) {
+                            if (!startCuti!.isBefore(endCuti!)) {
                               EasyLoading.showError(
                                   "Tanggal mulai cuti tidak boleh lebih dari sampai cuti",
                                   dismissOnTap: true);
@@ -249,8 +249,15 @@ class _CutiState extends State<Cuti> {
                               "end_cuti": endCuti.toString(),
                               "reason" : reasonController.text,
                               "atasan_name" : atasanController.text,
+                            }).whenComplete((){
+                              setState(() {
+                                startCuti = null;
+                                endCuti = null;
+                                reasonController.text = "";
+                                atasanController.text = "";
+                              });
                             });
-                            setState(() {});
+                            
                           },
                           style: ButtonStyle(
                               shape: MaterialStateProperty.all<
