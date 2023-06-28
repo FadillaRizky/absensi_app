@@ -1,8 +1,28 @@
+import 'package:absensi_app/database_profile.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+   DatabaseProfile? databaseInstance;
+
+  Future initDatabase() async {
+    await databaseInstance!.database();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    databaseInstance = DatabaseProfile();
+    initDatabase();
+    super.initState();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +45,11 @@ class HomePage extends StatelessWidget {
             SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(onPressed: (){
-                  Navigator.pushNamed(context, "/editprofile");
+                  if(databaseInstance != null){
+                    Navigator.pushNamed(context, "/profile");
+                  }else{
+                    Navigator.pushNamed(context, "/editprofile");
+                  }
                 }, child: Text("Form Biodata")))
           ],
         ),

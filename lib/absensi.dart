@@ -2,6 +2,7 @@ import 'package:absensi_app/absen_model.dart';
 import 'package:absensi_app/database_absen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class Absensi extends StatefulWidget {
   const Absensi({Key? key}) : super(key: key);
@@ -16,13 +17,36 @@ class _AbsensiState extends State<Absensi> {
   DatabaseAbsensi? databaseInstance;
 
   absensi(String today,String currentHour) async {
-    await databaseAbsensi.insert({
-      "today": today,
-      "come_in": currentHour,
-      "come_out": "k",
-    });
-    setState(() {
+    databaseInstance!.all().then((value) async{
+      List<AbsenModel> data = value;
+      var latestDate = DateFormat("EEEE, dd MMMM yyyy").parse(value.last.today!);
+      if (latestDate.day == now.day) {
+        EasyLoading.showError("Anda sudah absen untuk hari ini",dismissOnTap: true);
+        return;
+      }
+      await databaseAbsensi.insert({
+        "today": today,
+        "come_in": currentHour,
+        "come_out": "-",
+      });
+      setState(() {
 
+      });
+    });
+  }
+
+  absensiKeluar(String today,String currentHour) async {
+    databaseInstance!.all().then((value) async{
+      List<AbsenModel> data = value;
+      
+      await databaseAbsensi.update(
+        value.last.id!,
+      {
+        "come_out": currentHour,
+      });
+      setState(() {
+
+      });
     });
   }
   Future initDatabase() async {
@@ -90,7 +114,9 @@ class _AbsensiState extends State<Absensi> {
                         SizedBox(
                             height: 40,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                absensiKeluar(formattedDate, formattedHour);
+                              },
                               style: ButtonStyle(
                                   shape: MaterialStateProperty.all<
                                       RoundedRectangleBorder>(
@@ -120,34 +146,38 @@ class _AbsensiState extends State<Absensi> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   if (snapshot.data!.length == 0) {
-                    return Center(
-                      child: Text("Produk Belum Ditambahkan"),
+                    return Expanded(
+                      child: Center(
+                        child: Text("Absensi masih kosong"),
+                      ),
                     );
                   }
+                  // Membalikkan data agar data yg terbaru tampil di atas
+                  var data = snapshot.data!.reversed.toList();
                   return Expanded(
                     child: ListView.builder(
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         return  SizedBox(
-                          height: 60,
+                          height: 80,
                           child: Card(
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
                                 children: [
-                                  Text(snapshot.data![index].today!),
+                                  Text(data[index].today!),
                                   Expanded(child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Column(
                                         children: [
-                                          Text(snapshot.data![index].comeIn!),
+                                          Text(data[index].comeIn!),
                                           Text("Masuk"),
                                         ],
                                       ),
                                       Column(
                                         children: [
-                                          Text(snapshot.data![index].comeOut!),
+                                          Text(data[index].comeOut!),
                                           Text("keluar"),
                                         ],
                                       )

@@ -10,19 +10,36 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  DatabaseProfile databaseInstance = DatabaseProfile();
   TextEditingController nameController = TextEditingController();
   TextEditingController nikController = TextEditingController();
   TextEditingController bodController = TextEditingController();
   TextEditingController positionController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  DatabaseProfile databaseInstance = DatabaseProfile();
+  int? userId;
 
+  Future initDatabase() async {
+    await databaseInstance!.database();
+    setState(() {});
+    databaseInstance.all().then((value){
+      if (value.isNotEmpty) {
+        userId = value.first.id!;
+
+        nameController.text = value.first.name!;
+        nikController.text = value.first.nik!;
+        bodController.text = value.first.bod!;
+        positionController.text = value.first.position!;
+        addressController.text = value.first.address!;
+      }
+    });
+  }
 
   @override
   void initState() {
-    databaseInstance.database();
+    initDatabase();
     super.initState();
   }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,25 +48,39 @@ class _EditProfileState extends State<EditProfile> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          children: [
-            ItemProfile(title: "NamaPanjang", controller: nameController, tipeKeyboard: TextInputType.text),
-            ItemProfile(title: "NIK", controller: nikController, tipeKeyboard: TextInputType.text),
-            ItemProfile(title: "Tanggal Lahir", controller: bodController, tipeKeyboard: TextInputType.text),
-            ItemProfile(title: "Jabatan", controller: positionController, tipeKeyboard: TextInputType.text),
-            ItemProfile(title: "Alamat", controller: addressController, tipeKeyboard: TextInputType.text),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              ItemProfile(title: "NamaPanjang", controller: nameController, tipeKeyboard: TextInputType.text),
+              ItemProfile(title: "NIK", controller: nikController, tipeKeyboard: TextInputType.number),
+              ItemProfile(title: "Tanggal Lahir", controller: bodController, tipeKeyboard: TextInputType.datetime),
+              ItemProfile(title: "Jabatan", controller: positionController, tipeKeyboard: TextInputType.text),
+              ItemProfile(title: "Alamat", controller: addressController, tipeKeyboard: TextInputType.text),
+        
+              ElevatedButton(onPressed: ()async{
+                if(userId != null){
+                  await databaseInstance.update(userId!,{
+                    "name" : nameController.text,
+                    "nik" : nikController.text,
+                    "bod" : bodController.text,
+                    "position" : positionController.text,
+                    "address" : addressController.text,
+                  });
+                  Navigator.pop(context);
+                }else{
+                  await databaseInstance.insert({
+                    "name" : nameController.text,
+                    "nik" : nikController.text,
+                    "bod" : bodController.text,
+                    "position" : positionController.text,
+                    "address" : addressController.text,
+                  });
+                }
+                Navigator.popAndPushNamed(context, "/profile");
 
-            ElevatedButton(onPressed: ()async{
-                await databaseInstance.insert({
-                  "name" : nameController.text,
-                  "nik" : nikController.text,
-                  "bod" : bodController.text,
-                  "position" : positionController.text,
-                  "address" : addressController.text,
-                });
-
-            }, child: Text("Submit"))
-          ],
+              }, child: Text("Submit"))
+            ],
+          ),
         ),
       ),
     );
@@ -83,7 +114,7 @@ class ItemProfile extends StatelessWidget {
             keyboardType: tipeKeyboard,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.fromLTRB(20, 3, 1, 3),
-              hintText: title,
+              hintText: title == "Tanggal Lahir" ? "dd/mm/yyyy" : title,
               hintStyle: TextStyle(color: Colors.black26),
               border: OutlineInputBorder(
                 borderSide: BorderSide(width: 0, style: BorderStyle.none),
