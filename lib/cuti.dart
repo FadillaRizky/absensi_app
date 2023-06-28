@@ -261,8 +261,6 @@ class _CutiState extends State<Cuti> {
                             }).whenComplete((){});
                             
                             setState(() {
-                              startCuti = null;
-                              endCuti = null;
                               reasonController.text = "";
                               atasanController.text = "";
                             });
@@ -301,7 +299,6 @@ class _CutiState extends State<Cuti> {
                           );
                         }
                         // Membalikkan data agar data yg terbaru tampil di atas
-                        var data = snapshot.data!.reversed.toList();
                         return Expanded(
                           child: ListView.builder(
                             itemCount: snapshot.data!.length,
@@ -329,12 +326,12 @@ class _CutiState extends State<Cuti> {
                                                     Text(DateFormat(
                                                         'EEEE')
                                                         .format(DateTime.parse(
-                                                        data[index].startCuti!))
+                                                        snapshot.data![index].startCuti!))
                                                         .toString(),style: TextStyle(color: Colors.white)),
                                                     Text(DateFormat(
                                                             'dd MMMM yyyy')
                                                         .format(DateTime.parse(
-                                                            data[index].startCuti!))
+                                                            snapshot.data![index].startCuti!))
                                                         .toString(),style: TextStyle(color: Colors.white)),
                                                   ],
                                                 ),
@@ -345,12 +342,12 @@ class _CutiState extends State<Cuti> {
                                                     Text(DateFormat(
                                                         'EEEE')
                                                         .format(DateTime.parse(
-                                                        data[index].endCuti!))
+                                                        snapshot.data![index].endCuti!))
                                                         .toString(),style: TextStyle(color: Colors.white),),
                                                     Text(DateFormat(
                                                             'dd MMMM yyyy')
                                                         .format(DateTime.parse(
-                                                            data[index].endCuti!))
+                                                            snapshot.data![index].endCuti!))
                                                         .toString(),style: TextStyle(color: Colors.white)),
                                                   ],
                                                 ),
@@ -360,6 +357,7 @@ class _CutiState extends State<Cuti> {
                                             ),
                                             IconButton(onPressed: (){
                                               delete(snapshot.data![index].id!);
+                                              Navigator.pushReplacementNamed(context, "/cuti");
                                             }, icon: Icon(Icons.clear))
                                           ],
                                         ),
