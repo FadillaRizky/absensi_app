@@ -175,12 +175,14 @@ class _AbsensiState extends State<Absensi> {
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
                                             Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
                                                 Text(data[index].comeIn!),
                                                 Text("Masuk"),
                                               ],
                                             ),
                                             Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
                                                 Text(data[index].comeOut!),
                                                 Text("keluar"),
