@@ -1,5 +1,5 @@
-import 'package:absensi_app/database_profile.dart';
-import 'package:absensi_app/profile_model.dart';
+import 'package:absensi_app/database/database_profile.dart';
+import 'package:absensi_app/models/profile_model.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatefulWidget {

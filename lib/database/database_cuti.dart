@@ -1,28 +1,26 @@
 
 import 'dart:io';
-import 'package:absensi_app/profile_model.dart';
+import 'package:absensi_app/models/cuti_model.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-class DatabaseProfile {
-  final String databaseName = "my_database.db";
+class DatabaseCuti {
+  final String databaseName = "my_database_cuti.db";
   final int databaseVersion = 1;
 
-  final String table = "profile";
+  final String table = "absensi";
 
   final String id = "id";
-  final String name = "name";
-  final String nik = "nik";
-  final String bod = "bod";
-  final String position = "position";
-  final String address = "address";
+  final String startCuti = "start_cuti";
+  final String endCuti = "end_cuti";
+  final String reason = "reason";
+  final String atasanName = "atasan_name";
 
   Database? _database;
 
   Future<Database> database() async {
-    if (_database != null)
-      return _database!;
+    if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
@@ -35,13 +33,13 @@ class DatabaseProfile {
 
   Future _onCreate(Database db, int version) async {
     await db.execute(
-        'CREATE TABLE $table ($id INTEGER PRIMARY KEY, $name TEXT NULL , $nik TEXT NULL,$bod TEXT NULL,$position TEXT NULL,$address TEXT NULL)');
+        'CREATE TABLE $table ($id INTEGER PRIMARY KEY, $startCuti TEXT NULL , $endCuti TEXT NULL,$reason TEXT NULL,$atasanName TEXT NULL)');
   }
 
-  Future<List<ProfileModel>> all() async {
+  Future<List<CutiModel>> all() async {
     final data = await _database!.query(table);
-    List<ProfileModel> result =
-    data.map((e) => ProfileModel.fromJson(e)).toList();
+    List<CutiModel> result =
+    data.map((e) => CutiModel.fromJson(e)).toList();
     return result;
   }
 

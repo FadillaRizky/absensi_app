@@ -1,6 +1,6 @@
 
 import 'dart:io';
-import 'package:absensi_app/absen_model.dart';
+import 'package:absensi_app/models/absen_model.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -35,12 +35,12 @@ class DatabaseAbsensi {
         'CREATE TABLE $table ($id INTEGER PRIMARY KEY, $today TEXT NULL , $comeIn TEXT NULL,$comeOut TEXT NULL)');
   }
 
-  Future<List<AbsenModel>> all() async {
-    final data = await _database!.query(table);
-    List<AbsenModel> result =
-    data.map((e) => AbsenModel.fromJson(e)).toList();
-    return result;
-  }
+  // Future<List<AbsenModel>> all() async {
+  //   final data = await _database!.query(table);
+  //   List<AbsenModel> result =
+  //   data.map((e) => AbsenModel.fromJson(e)).toList();
+  //   return result;
+  // }
 
   Future<int> insert(Map<String, dynamic> row) async {
     final query = await _database!.insert(table, row);

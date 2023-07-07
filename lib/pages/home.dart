@@ -1,4 +1,4 @@
-import 'package:absensi_app/database_profile.dart';
+import 'package:absensi_app/database/database_profile.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {

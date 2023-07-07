@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'database_profile.dart';
+import '../database/database_profile.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
