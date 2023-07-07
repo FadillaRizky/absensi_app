@@ -36,12 +36,12 @@ class DatabaseCuti {
         'CREATE TABLE $table ($id INTEGER PRIMARY KEY, $startCuti TEXT NULL , $endCuti TEXT NULL,$reason TEXT NULL,$atasanName TEXT NULL)');
   }
 
-  Future<List<CutiModel>> all() async {
-    final data = await _database!.query(table);
-    List<CutiModel> result =
-    data.map((e) => CutiModel.fromJson(e)).toList();
-    return result;
-  }
+  // Future<List<CutiModel>> all() async {
+  //   final data = await _database!.query(table);
+  //   List<CutiModel> result =
+  //   data.map((e) => CutiModel.fromJson(e)).toList();
+  //   return result;
+  // }
 
   Future<int> insert(Map<String, dynamic> row) async {
     final query = await _database!.insert(table, row);
