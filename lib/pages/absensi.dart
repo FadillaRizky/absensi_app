@@ -1,5 +1,6 @@
 import 'package:absensi_app/models/absen_model.dart';
 import 'package:absensi_app/database/database_absen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -16,6 +17,7 @@ class Absensi extends StatefulWidget {
 class _AbsensiState extends State<Absensi> {
   DateTime now = DateTime.now();
   DatabaseAbsensi databaseAbsensi = DatabaseAbsensi();
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // absensi(String today, String currentHour) async {
   //   Future<List<AbsenModel>> data = databaseAbsensi!.all();
@@ -52,6 +54,26 @@ class _AbsensiState extends State<Absensi> {
   //   });
   //   setState(() {});
   // }
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      getDataFromFirestore() async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await _firestore.collection("absensi").get();
+    return querySnapshot.docs;
+  }
+
+  selectId() async {
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> documents =
+        await getDataFromFirestore();
+    var id = documents.last.id;
+    // List<AbsenModel> myModels = documents.map((doc) => AbsenModel.fromSnapshot(doc)).toList();
+    // List<QueryDocumentSnapshot<Map<String, dynamic>>> documents = await getDataFromFirestore();
+    // List<QueryDocumentSnapshot<Map<String,dynamic>>> myModels = documents.map((docs) => AbsenModel.fromSnapshot(doc)).toList();
+    // final data = await FirebaseFirestore.instance.collection("absensi").id;
+    // // List<AbsenModel> result = data.map((e) => AbsenModel.fromJson(e)).toList();
+    //
+    // var result = data.map((e) => AbsenModel.fromSnapshot(e)).toList();
+    return id;
+  }
 
   Future initDatabase() async {
     await databaseAbsensi!.database();
@@ -104,9 +126,10 @@ class _AbsensiState extends State<Absensi> {
                             height: 40,
                             child: ElevatedButton(
                               onPressed: () {
-                                FirestoreService.addAbsensi(
-                                    AbsenModel(today: 'senin', comeIn: '13.10', comeOut: '13.10'
-                                       ));
+                                FirestoreService.addAbsensi(AbsenModel(
+                                    today: formattedDate,
+                                    comeIn: formattedHour,
+                                    comeOut: '-'));
                                 // absensi(formattedDate, formattedHour);
                               },
                               style: ButtonStyle(
@@ -122,8 +145,17 @@ class _AbsensiState extends State<Absensi> {
                         SizedBox(
                             height: 40,
                             child: ElevatedButton(
-                              onPressed: () {
-                                // absensiKeluar(formattedDate, formattedHour);
+                              onPressed: () async {
+                                List<
+                                        QueryDocumentSnapshot<
+                                            Map<String, dynamic>>> documents =
+                                    await getDataFromFirestore();
+                                var id = documents.last.id;
+                                FirestoreService.editAbsensi(
+                                    AbsenModel(
+                                      comeOut: formattedHour,
+                                    ),
+                                    id);
                               },
                               style: ButtonStyle(
                                   shape: MaterialStateProperty.all<
@@ -146,8 +178,66 @@ class _AbsensiState extends State<Absensi> {
             ),
             Text(
               "Riwayat Presensi",
-              style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream:
+                    FirebaseFirestore.instance.collection("absensi").snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    var valueAbsen = snapshot.data!.docs
+                        .map((absensi) => AbsenModel.fromSnapshot(absensi))
+                        .toList();
+                    print(valueAbsen[1].comeIn);
+                    return ListView.builder(
+                        itemCount: valueAbsen.length,
+                        itemBuilder: (context, index) {
+                          var id = snapshot.data!.docs[index].id;
+                          return SizedBox(
+                            height: 80,
+                            child: Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Text(valueAbsen[index].today!),
+                                    Expanded(
+                                        child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(valueAbsen[index].comeIn!),
+                                            Text("Masuk"),
+                                          ],
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(valueAbsen[index].comeOut!),
+                                            Text("keluar"),
+                                          ],
+                                        )
+                                      ],
+                                    ))
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        });
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
+            )
             // databaseAbsensi != null
             //     ? FutureBuilder<List<AbsenModel>>(
             //         future: databaseAbsensi!.all(),
