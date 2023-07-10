@@ -1,17 +1,19 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class CutiModel {
-  int? id;
-  String? startCuti, endCuti,reason,atasanName ;
+  String startCuti, endCuti, reason,atasanName;
 
   CutiModel(
-      {this.id,this.startCuti,this.endCuti,this.reason,this.atasanName});
+      {required this.startCuti, required this.endCuti, required this.reason,required this.atasanName});
 
-  factory CutiModel.fromJson(Map<String, dynamic> json) {
+  Map<String, dynamic> toJson() {
+    return {"start_cuti": startCuti, "end_cuti": endCuti, "reason": reason,"atasan_name":atasanName};
+  }
+
+  factory CutiModel.fromSnapshot(
+      QueryDocumentSnapshot<Map<String, dynamic>> json) {
     return CutiModel(
-      id: json['id'],
-      startCuti: json['start_cuti'],
-      endCuti: json['end_cuti'],
-      reason: json['reason'],
-      atasanName: json['atasan_name'],
-    );
+        startCuti: json["start_cuti"], endCuti: 'end_cuti', reason: "reason",atasanName:"atasan_name");
   }
 }

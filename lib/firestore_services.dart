@@ -10,4 +10,10 @@ class FirestoreService {
   static Future<void> editAbsensi(AbsenModel absensi,String id)async{
     await FirebaseFirestore.instance.collection("absensi").doc(id).update(absensi.toJson());
   }
+
+  static Future<void> addCuti(CutiModel cuti) async {
+    await FirebaseFirestore.instance
+        .collection("cuti")
+        .add(cuti.toJson());
+  }
 }

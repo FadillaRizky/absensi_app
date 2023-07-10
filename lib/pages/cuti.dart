@@ -1,4 +1,5 @@
 
+import 'package:absensi_app/firestore_services.dart';
 import 'package:absensi_app/models/absen_model.dart';
 import 'package:absensi_app/models/cuti_model.dart';
 import 'package:absensi_app/database/database_absen.dart';
@@ -25,20 +26,20 @@ class _CutiState extends State<Cuti> {
   DateTime? endCuti;
 
   tambahCuti(DateTime startCuti, DateTime endCuti) async {
-    if (!startCuti.isBefore(endCuti)) {
-      EasyLoading.showError(
-          "Tanggal mulai cuti tidak boleh lebih dari sampai cuti",
-          dismissOnTap: true);
-      return;
-    }
-    Future<List<CutiModel>> data = databaseInstance!.all();
-    List<CutiModel> value = await data;
-    await databaseCuti.insert({
-      "start_cuti": startCuti.toString(),
-      "end_cuti": endCuti.toString(),
-      "reason" : reasonController.text
-    });
-    setState(() {});
+    // if (!startCuti.isBefore(endCuti)) {
+    //   EasyLoading.showError(
+    //       "Tanggal mulai cuti tidak boleh lebih dari sampai cuti",
+    //       dismissOnTap: true);
+    //   return;
+    // }
+    // Future<List<CutiModel>> data = databaseInstance!.all();
+    // List<CutiModel> value = await data;
+    // await databaseCuti.insert({
+    //   "start_cuti": startCuti.toString(),
+    //   "end_cuti": endCuti.toString(),
+    //   "reason" : reasonController.text
+    // });
+    // setState(() {});
   }
   Future delete(int id) async {
     await databaseInstance!.delete(id);
@@ -235,15 +236,9 @@ class _CutiState extends State<Cuti> {
                                   dismissOnTap: true);
                               return;
                             }
-
-                            Future<List<CutiModel>> data = databaseInstance!.all();
-                            List<CutiModel> value = await data;
-                            await databaseCuti.insert({
-                              "start_cuti": startCuti.toString(),
-                              "end_cuti": endCuti.toString(),
-                              "reason" : reasonController.text,
-                              "atasan_name" : atasanController.text,
-                            }).whenComplete((){});
+                            FirestoreService.addCuti(
+                                    CutiModel(startCuti: startCuti.toString(), endCuti: endCuti.toString(), reason: reasonController.text,atasanName: atasanController.text
+                                       ));
                             
                             setState(() {
                               reasonController.text = "";
@@ -271,148 +266,149 @@ class _CutiState extends State<Cuti> {
               "Riwayat Cuti",
               style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
             ),
-            databaseInstance != null
-                ? FutureBuilder<List<CutiModel>>(
-                    future: databaseInstance!.all(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        if (snapshot.data!.length == 0) {
-                          return Expanded(
-                            child: Center(
-                              child: Text("Cuti masih kosong"),
-                            ),
-                          );
-                        }
-                        // Membalikkan data agar data yg terbaru tampil di atas
-                        return Expanded(
-                          child: ListView.builder(
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (context, index) {
-                              return SizedBox(
-                                width: double.infinity,
-                                child: Card(
-                                  color: Colors.blue,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Container(
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                                  children: [
-                                                Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(DateFormat(
-                                                        'EEEE')
-                                                        .format(DateTime.parse(
-                                                        snapshot.data![index].startCuti!))
-                                                        .toString(),style: TextStyle(color: Colors.white)),
-                                                    Text(DateFormat(
-                                                            'dd MMMM yyyy')
-                                                        .format(DateTime.parse(
-                                                            snapshot.data![index].startCuti!))
-                                                        .toString(),style: TextStyle(color: Colors.white)),
-                                                  ],
-                                                ),
-                                                Text("sampai",style: TextStyle(color: Colors.white)),
-                                                Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(DateFormat(
-                                                        'EEEE')
-                                                        .format(DateTime.parse(
-                                                        snapshot.data![index].endCuti!))
-                                                        .toString(),style: TextStyle(color: Colors.white),),
-                                                    Text(DateFormat(
-                                                            'dd MMMM yyyy')
-                                                        .format(DateTime.parse(
-                                                            snapshot.data![index].endCuti!))
-                                                        .toString(),style: TextStyle(color: Colors.white)),
-                                                  ],
-                                                ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            IconButton(onPressed: (){
-                                              delete(snapshot.data![index].id!);
-                                              Navigator.pushReplacementNamed(context, "/cuti");
-                                            }, icon: Icon(Icons.clear))
-                                          ],
-                                        ),
-                                        SizedBox(height: 5,),
-                                        Text("Nama Atasan",style: TextStyle(color: Colors.white)),
-                                        SizedBox(height: 5,),
-                                        TextFormField(
-                                          enabled: false,
-                                          initialValue: snapshot.data![index].atasanName ?? "",
-                                          maxLines: null,
-                                          decoration: InputDecoration(
-                                            contentPadding: EdgeInsets.fromLTRB(20, 15, 1, 3),
-                                            hintStyle: TextStyle(color: Colors.black26),
-                                            border: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  width: 0, style: BorderStyle.none),
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
-                                            filled: true,
-                                            fillColor: Color.fromARGB(
-                                              239,
-                                              239,
-                                              239,
-                                              239,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 5,),
-                                        Text("Alasan Cuti",style: TextStyle(color: Colors.white)),
-                                        SizedBox(height: 5,),
-                                        TextFormField(
-                                          enabled: false,
-                                          initialValue: snapshot.data![index].reason,
-                                          maxLines: null,
-                                          decoration: InputDecoration(
-                                            contentPadding: EdgeInsets.fromLTRB(20, 15, 1, 3),
-                                            hintStyle: TextStyle(color: Colors.black26),
-                                            border: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  width: 0, style: BorderStyle.none),
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
-                                            filled: true,
-                                            fillColor: Color.fromARGB(
-                                              239,
-                                              239,
-                                              239,
-                                              239,
-                                            ),
-                                          ),
-                                        )
+            // databaseInstance != null
+            //     ? FutureBuilder<List<CutiModel>>(
+            //         future: databaseInstance!.all(),
+            //         builder: (context, snapshot) {
+            //           if (snapshot.hasData) {
+            //             if (snapshot.data!.length == 0) {
+            //               return Expanded(
+            //                 child: Center(
+            //                   child: Text("Cuti masih kosong"),
+            //                 ),
+            //               );
+            //             }
+            //             // Membalikkan data agar data yg terbaru tampil di atas
+            //             return Expanded(
+            //               child: ListView.builder(
+            //                 itemCount: snapshot.data!.length,
+            //                 itemBuilder: (context, index) {
+            //                   return SizedBox(
+            //                     width: double.infinity,
+            //                     child: Card(
+            //                       color: Colors.blue,
+            //                       child: Padding(
+            //                         padding: const EdgeInsets.all(8.0),
+            //                         child: Column(
+            //                           crossAxisAlignment: CrossAxisAlignment.start,
+            //                           children: [
+            //                             Row(
+            //                               children: [
+            //                                 Expanded(
+            //                                   child: Container(
+            //                                     child: Row(
+            //                                       mainAxisAlignment:
+            //                                       MainAxisAlignment.spaceEvenly,
+            //                                       children: [
+            //                                     Column(
+            //                                       mainAxisAlignment: MainAxisAlignment.center,
+            //                                       children: [
+            //                                         Text(DateFormat(
+            //                                             'EEEE')
+            //                                             .format(DateTime.parse(
+            //                                             snapshot.data![index].startCuti!))
+            //                                             .toString(),style: TextStyle(color: Colors.white)),
+            //                                         Text(DateFormat(
+            //                                                 'dd MMMM yyyy')
+            //                                             .format(DateTime.parse(
+            //                                                 snapshot.data![index].startCuti!))
+            //                                             .toString(),style: TextStyle(color: Colors.white)),
+            //                                       ],
+            //                                     ),
+            //                                     Text("sampai",style: TextStyle(color: Colors.white)),
+            //                                     Column(
+            //                                       mainAxisAlignment: MainAxisAlignment.center,
+            //                                       children: [
+            //                                         Text(DateFormat(
+            //                                             'EEEE')
+            //                                             .format(DateTime.parse(
+            //                                             snapshot.data![index].endCuti!))
+            //                                             .toString(),style: TextStyle(color: Colors.white),),
+            //                                         Text(DateFormat(
+            //                                                 'dd MMMM yyyy')
+            //                                             .format(DateTime.parse(
+            //                                                 snapshot.data![index].endCuti!))
+            //                                             .toString(),style: TextStyle(color: Colors.white)),
+            //                                       ],
+            //                                     ),
+            //                                       ],
+            //                                     ),
+            //                                   ),
+            //                                 ),
+            //                                 IconButton(onPressed: (){
+            //                                   delete(snapshot.data![index].id!);
+            //                                   Navigator.pushReplacementNamed(context, "/cuti");
+            //                                 }, icon: Icon(Icons.clear))
+            //                               ],
+            //                             ),
+            //                             SizedBox(height: 5,),
+            //                             Text("Nama Atasan",style: TextStyle(color: Colors.white)),
+            //                             SizedBox(height: 5,),
+            //                             TextFormField(
+            //                               enabled: false,
+            //                               initialValue: snapshot.data![index].atasanName ?? "",
+            //                               maxLines: null,
+            //                               decoration: InputDecoration(
+            //                                 contentPadding: EdgeInsets.fromLTRB(20, 15, 1, 3),
+            //                                 hintStyle: TextStyle(color: Colors.black26),
+            //                                 border: OutlineInputBorder(
+            //                                   borderSide: BorderSide(
+            //                                       width: 0, style: BorderStyle.none),
+            //                                   borderRadius: BorderRadius.circular(10),
+            //                                 ),
+            //                                 filled: true,
+            //                                 fillColor: Color.fromARGB(
+            //                                   239,
+            //                                   239,
+            //                                   239,
+            //                                   239,
+            //                                 ),
+            //                               ),
+            //                             ),
+            //                             SizedBox(height: 5,),
+            //                             Text("Alasan Cuti",style: TextStyle(color: Colors.white)),
+            //                             SizedBox(height: 5,),
+            //                             TextFormField(
+            //                               enabled: false,
+            //                               initialValue: snapshot.data![index].reason,
+            //                               maxLines: null,
+            //                               decoration: InputDecoration(
+            //                                 contentPadding: EdgeInsets.fromLTRB(20, 15, 1, 3),
+            //                                 hintStyle: TextStyle(color: Colors.black26),
+            //                                 border: OutlineInputBorder(
+            //                                   borderSide: BorderSide(
+            //                                       width: 0, style: BorderStyle.none),
+            //                                   borderRadius: BorderRadius.circular(10),
+            //                                 ),
+            //                                 filled: true,
+            //                                 fillColor: Color.fromARGB(
+            //                                   239,
+            //                                   239,
+            //                                   239,
+            //                                   239,
+            //                                 ),
+            //                               ),
+            //                             )
 
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      }
-                      if (snapshot.hasError) {
-                        Center(child: Text("${snapshot.error}"));
-                      }
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
-                  )
-                : CircularProgressIndicator(),
+            //                           ],
+            //                         ),
+            //                       ),
+            //                     ),
+            //                   );
+            //                 },
+            //               ),
+            //             );
+            //           }
+            //           if (snapshot.hasError) {
+            //             Center(child: Text("${snapshot.error}"));
+            //           }
+            //           return Center(
+            //             child: CircularProgressIndicator(),
+            //           );
+            //         },
+            //       )
+            //     : CircularProgressIndicator(),
+          
           ],
         ),
       ),
