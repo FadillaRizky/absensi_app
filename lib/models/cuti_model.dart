@@ -14,6 +14,6 @@ class CutiModel {
   factory CutiModel.fromSnapshot(
       QueryDocumentSnapshot<Map<String, dynamic>> json) {
     return CutiModel(
-        startCuti: json["start_cuti"], endCuti: 'end_cuti', reason: "reason",atasanName:"atasan_name");
+        startCuti: json["start_cuti"], endCuti: json['end_cuti'], reason: json["reason"],atasanName:json["atasan_name"]);
   }
 }

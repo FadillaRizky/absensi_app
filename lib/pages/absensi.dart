@@ -151,10 +151,9 @@ class _AbsensiState extends State<Absensi> {
                                             Map<String, dynamic>>> documents =
                                     await getDataFromFirestore();
                                 var id = documents.last.id;
+                                print(id);
                                 FirestoreService.editAbsensi(
-                                    AbsenModel(
-                                      comeOut: formattedHour,
-                                    ),
+                                    {"come_out" : formattedHour},
                                     id);
                               },
                               style: ButtonStyle(
@@ -185,52 +184,62 @@ class _AbsensiState extends State<Absensi> {
                 stream:
                     FirebaseFirestore.instance.collection("absensi").snapshots(),
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    var valueAbsen = snapshot.data!.docs
-                        .map((absensi) => AbsenModel.fromSnapshot(absensi))
-                        .toList();
-                    print(valueAbsen[1].comeIn);
-                    return ListView.builder(
-                        itemCount: valueAbsen.length,
-                        itemBuilder: (context, index) {
-                          var id = snapshot.data!.docs[index].id;
-                          return SizedBox(
-                            height: 80,
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Text(valueAbsen[index].today!),
-                                    Expanded(
-                                        child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(valueAbsen[index].comeIn!),
-                                            Text("Masuk"),
-                                          ],
-                                        ),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(valueAbsen[index].comeOut!),
-                                            Text("keluar"),
-                                          ],
-                                        )
-                                      ],
-                                    ))
-                                  ],
+                  try {
+                     
+                    if (snapshot.data!.docs.length <= 0) {
+                      return Center(
+                        child: Text("Data Kosong"),
+                      );
+                    }
+                    if (snapshot.hasData) {
+                      var valueAbsen = snapshot.data!.docs
+                          .map((absensi) => AbsenModel.fromSnapshot(absensi))
+                          .toList();
+                      return ListView.builder(
+                          itemCount: valueAbsen.length,
+                          itemBuilder: (context, index) {
+                            var id = snapshot.data!.docs[index].id;
+                            return SizedBox(
+                              height: 80,
+                              child: Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      Text(valueAbsen[index].today!),
+                                      Expanded(
+                                          child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(valueAbsen[index].comeIn!),
+                                              Text("Masuk"),
+                                            ],
+                                          ),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(valueAbsen[index].comeOut!),
+                                              Text("keluar"),
+                                            ],
+                                          )
+                                        ],
+                                      ))
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        });
+                            );
+                          });
+                    }
+                    
+                  } catch (e) {
+                    print(e); 
                   }
                   return Center(
                     child: CircularProgressIndicator(),
